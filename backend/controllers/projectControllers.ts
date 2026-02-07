@@ -85,8 +85,6 @@ const getProjectById = async (req: Request, res: Response) => {
         const isProjectLead = project.projectLead._id.toString() === req.user.id;
         const isAdmin = req.user.role === 'admin';
 
-        console.log(isAssigned);
-
         if(!isAssigned && !isProjectLead && !isAdmin) {
             return res.status(403).json({ success: false, message: 'Not authorized to view this project' });
         }
