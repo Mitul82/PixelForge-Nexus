@@ -177,13 +177,13 @@ const assignTeamMember = async (req: Request, res: Response) => {
 
 const removeTeamMember = async (req: Request, res: Response) => {
     try {
-        const project = await Project.findById(req.params.id);
+        const project = await Project.findById(req.params.id).populate('projectLead');
 
         if(!project) {
             return res.status(404).json({ success: false, message: 'Project not found' });
         }
 
-        const isProjectLead = project.projectLead.toString() === req.user.role;
+        const isProjectLead = project.projectLead.role.toString() === req.user.role;
         const isAdmin = req.user.role === 'admin';
 
         if(!isProjectLead && !isAdmin) {
