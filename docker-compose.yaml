@@ -1,0 +1,80 @@
+version: "3.8"
+
+services:
+  backend:
+    constainer_name: pixelforge-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      MONGODB_URI: ${MONGODB_URI}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_LIFETIME: ${JWT_LIFETIME}
+      PORT: ${PORT}
+      MAX_FILE_SIZE: ${MAX_FILE_SIZE}
+      UPLOAD_DIR: ${UPLOAD_DIR}
+      FRONTEND_URL: ${FRONTEND_URL}
+    depends_on: -mongodb
+    restart: unless-stopped
+    network: -pixelforge-network
+
+  frontend:
+    container_name: pixelforge-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_BACKEND_URL: ${VITE_BACKEND_URL}
+    ports:
+      - "80 : 80"
+    environment:
+      VITE_BACKEND_URL: ${VITE_BACKEND_URL}
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - pixelforge-network
+
+  mongodb:
+    image: mongo:8
+    container_name: pixelforge-mongodb
+    ports: -"27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    volumes:
+      - mongodb_data:/data/db
+    restart: unless-stopped
+    networks:
+      - pixelforge-network
+    healthcheck:
+      test: [ "CMD", "mongo", "--eval", "db.adminCommand('ping')" ]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: pixelforge-mongo-express
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${ME_CONFIG_MONGODB_ADMINUSERNAME}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${ME_CONFIG_MONGODB_ADMINPASSWORD}
+      ME_CONFIG_MONGODB_URL: ${ME_CONFIG_MONGODB_URL}
+    depends_on:
+      - mongodb
+    restart: unless-stopped
+    networks:
+      - pixelforge-network
+
+  volumes:
+    mongodb_data:
+
+
+  networks:
+    pixelforge-network:
+      driver: bridge
