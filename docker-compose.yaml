@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   backend:
-    constainer_name: pixelforge-backend
+    container_name: pixelforge-backend
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -16,9 +16,11 @@ services:
       MAX_FILE_SIZE: ${MAX_FILE_SIZE}
       UPLOAD_DIR: ${UPLOAD_DIR}
       FRONTEND_URL: ${FRONTEND_URL}
-    depends_on: -mongodb
+    depends_on:
+      - mongodb
     restart: unless-stopped
-    network: -pixelforge-network
+    networks:
+      - pixelforge-network
 
   frontend:
     container_name: pixelforge-frontend
@@ -28,7 +30,7 @@ services:
       args:
         VITE_BACKEND_URL: ${VITE_BACKEND_URL}
     ports:
-      - "80 : 80"
+      - "80:80"
     environment:
       VITE_BACKEND_URL: ${VITE_BACKEND_URL}
     depends_on:
@@ -40,7 +42,8 @@ services:
   mongodb:
     image: mongo:8
     container_name: pixelforge-mongodb
-    ports: -"27017:27017"
+    ports:
+      - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
@@ -71,10 +74,10 @@ services:
     networks:
       - pixelforge-network
 
-  volumes:
-    mongodb_data:
+volumes:
+  mongodb_data:
 
 
-  networks:
-    pixelforge-network:
-      driver: bridge
+networks:
+  pixelforge-network:
+    driver: bridge
