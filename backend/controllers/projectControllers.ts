@@ -1,3 +1,4 @@
+import { crossOriginResourcePolicy } from 'helmet';
 import Project from '../models/projectModel.js';
 import User from '../models/userModel.js';
 
@@ -76,9 +77,15 @@ const getProjectById = async (req: Request, res: Response) => {
             return res.status(404).json({ success: false, message: 'Project not found' });
         }
 
-        const isAssigned = project.teamMembers.some(tm => tm.userId.toString() === req.user._id);
+        const isAssigned = project.teamMembers.some(tm => {
+            if(tm.userId._id.toString() === req.user._id.toString()) {
+                return true;
+            }
+        });
         const isProjectLead = project.projectLead._id.toString() === req.user.id;
         const isAdmin = req.user.role === 'admin';
+
+        console.log(isAssigned);
 
         if(!isAssigned && !isProjectLead && !isAdmin) {
             return res.status(403).json({ success: false, message: 'Not authorized to view this project' });

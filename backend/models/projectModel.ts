@@ -7,7 +7,7 @@ interface IProject extends mongoose.Document {
     status: 'active' | 'completed' | 'on-hold',
     createdBy: mongoose.Types.ObjectId,
     projectLead: mongoose.Types.ObjectId,
-    teamMembers: { userId: mongoose.Schema.Types.ObjectId, role: 'lead' | 'developer', assignedAt: Date }[],
+    teamMembers: { userId: { _id: mongoose.Types.ObjectId }, role: 'lead' | 'developer', assignedAt: Date }[],
     createdAt: Date,
     updatedAt: Date
 }
