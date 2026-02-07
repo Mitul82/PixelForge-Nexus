@@ -76,7 +76,7 @@ const getProjectById = async (req: Request, res: Response) => {
             return res.status(404).json({ success: false, message: 'Project not found' });
         }
 
-        const isAssigned = project.teamMembers.some(tm => tm.userId.toString() === req.user.id);
+        const isAssigned = project.teamMembers.some(tm => tm.userId.toString() === req.user._id);
         const isProjectLead = project.projectLead._id.toString() === req.user.id;
         const isAdmin = req.user.role === 'admin';
 
