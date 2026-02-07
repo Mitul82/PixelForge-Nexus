@@ -18,7 +18,7 @@ function UserManagement() {
     const [users, setUsers] = React.useState<User[]>([]);
     const [success, setSuccess] = React.useState('');
     const [showCreateForm, setShowCreateForm] = React.useState(false);
-    const [editingUser, setEditingUser] = React.useState<string | null>(null);
+    // const [editingUser, setEditingUser] = React.useState<string | null>(null);
 
     const { loading, setLoading, error, setError } =  React.useContext(AuthContext);
 
@@ -90,19 +90,19 @@ function UserManagement() {
         }
     }
 
-    const handleUpdateUser = async (userId: string, updates: any) => {
-        try {
-            await userAPI.updateUser(userId, updates);
+    // const handleUpdateUser = async (userId: string, updates: any) => {
+    //     try {
+    //         await userAPI.updateUser(userId, updates);
       
-            setSuccess('User updated successfully!');
+    //         setSuccess('User updated successfully!');
         
-            setEditingUser(null);
+    //         setEditingUser(null);
             
-            fetchUsers();
-        } catch (err: any) {
-            setError(err.response?.data?.message || 'Failed to update user');
-        }
-    }
+    //         fetchUsers();
+    //     } catch (err: any) {
+    //         setError(err.response?.data?.message || 'Failed to update user');
+    //     }
+    // }
 
     const handleDeleteUser = async (userId: string, userName: string) => {
         if (!window.confirm(`Are you sure you want to deactivate ${userName}?`)) {
@@ -235,7 +235,6 @@ function UserManagement() {
                                             <td className='actions'>
                                                 {user.isActive && (
                                                     <>
-                                                        <button className='action-btn edit' onClick={() => setEditingUser(user._id)} title='Edit user'>📝</button>
                                                         <button className='action-btn delete' onClick={() => handleDeleteUser(user._id, user.fullName)} title='Deactivate user'>🗑️</button>
                                                     </>
                                                 )}
